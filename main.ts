@@ -55,6 +55,26 @@ controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.P
         P2_Move_History.shift()
     }
 })
+controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Repeated, function () {
+    projectile = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 1 1 3 . . . . . . 
+        . . . . . . 1 3 . 3 3 . . . . . 
+        . . . . . . 1 . . . 3 2 2 3 . . 
+        . . . . . 1 3 . . . 2 2 1 3 3 . 
+        . . . . . 1 3 . 2 2 3 1 1 1 3 . 
+        . . 2 2 2 1 3 3 3 3 3 1 1 1 3 . 
+        . . 1 1 1 1 3 1 1 1 1 1 1 1 3 . 
+        . . 2 2 2 1 3 3 3 3 3 1 1 1 3 . 
+        . . . . . 1 3 . 2 2 3 1 1 1 3 . 
+        . . . . . 1 3 . . . 2 2 1 3 3 . 
+        . . . . . . 1 . . . 3 2 2 3 . . 
+        . . . . . . 1 3 . 3 3 . . . . . 
+        . . . . . . . 1 1 3 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, P1_Sprite, 250, 0)
+})
 controller.player2.onButtonEvent(ControllerButton.Left, ControllerButtonEvent.Pressed, function () {
     controller.moveSprite(P1_Sprite)
     P1_move_history.push("Left")
@@ -82,6 +102,24 @@ controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
     if (P1_move_history.length > 5) {
         P1_move_history.shift()
     }
+    projectile = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . 2 2 2 2 . . . 
+        . . . . . . . 2 2 1 1 1 1 2 . . 
+        . . . . 2 2 3 3 1 1 1 1 1 1 . . 
+        . . 3 3 3 3 1 1 1 1 1 1 1 1 . . 
+        . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
+        . . 3 3 2 2 3 1 1 1 1 1 1 1 . . 
+        . . . . . . 2 2 3 1 1 1 1 2 . . 
+        . . . . . . . . . 2 2 2 2 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, P1_Sprite, 250, 0)
 })
 controller.player1.onButtonEvent(ControllerButton.Left, ControllerButtonEvent.Pressed, function () {
     controller.moveSprite(P1_Sprite)
@@ -97,6 +135,7 @@ controller.player1.onButtonEvent(ControllerButton.Down, ControllerButtonEvent.Pr
         P1_move_history.shift()
     }
 })
+let projectile: Sprite = null
 let combo_index = 0
 let input_index = 0
 let P1_move_history: string[] = []
@@ -111,9 +150,28 @@ let Combo_store = [
 "A"
 ]
 let Current_Screen = 1
-scene.setBackgroundImage(assets.image`cityscape2`)
-if (game.askForNumber("1 or 2", 1) == 1) {
+scene.setBackgroundImage(assets.image`Title Screen`)
+tiles.setCurrentTilemap(tilemap`level1`)
+if (game.ask("A=monkey B=Ghost")) {
     P1_Sprite = sprites.create(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        . c d f d d f d e e d d f . . . 
+        c d e e d d d d e e b d c . . . 
+        c d d d d c d d e e b d c . . . 
+        c c c c c d d e e e f c . . . . 
+        . f d d d d e e e f f . . . . . 
+        . . f f f f f e e e e f . . . . 
+        . . . . f f e e e e e e f . f f 
+        . . . f e e f e e f e e f . e f 
+        . . f e e f e e f e e e f . e f 
+        . f b d f d b f b b f e f f e f 
+        . f d d f d d f d d b e f f f f 
+        . . f f f f f f f f f f f f f . 
+        `, SpriteKind.Player)
+    P2_Sprite = sprites.create(img`
         ........................
         ........................
         ........................
@@ -138,45 +196,9 @@ if (game.askForNumber("1 or 2", 1) == 1) {
         ........................
         ........................
         ........................
-        `, SpriteKind.Player)
-    P2_Sprite = sprites.create(img`
-        . . . . f f f f f . . . . . . . 
-        . . . f e e e e e f . . . . . . 
-        . . f d d d d e e e f . . . . . 
-        . c d f d d f d e e f f . . . . 
-        . c d f d d f d e e d d f . . . 
-        c d e e d d d d e e b d c . . . 
-        c d d d d c d d e e b d c . . . 
-        c c c c c d d e e e f c . . . . 
-        . f d d d d e e e f f . . . . . 
-        . . f f f f f e e e e f . . . . 
-        . . . . f f e e e e e e f . f f 
-        . . . f e e f e e f e e f . e f 
-        . . f e e f e e f e e e f . e f 
-        . f b d f d b f b b f e f f e f 
-        . f d d f d d f d d b e f f f f 
-        . . f f f f f f f f f f f f f . 
         `, SpriteKind.Player)
 } else {
     P1_Sprite = sprites.create(img`
-        . . . . f f f f f . . . . . . . 
-        . . . f e e e e e f . . . . . . 
-        . . f d d d d e e e f . . . . . 
-        . c d f d d f d e e f f . . . . 
-        . c d f d d f d e e d d f . . . 
-        c d e e d d d d e e b d c . . . 
-        c d d d d c d d e e b d c . . . 
-        c c c c c d d e e e f c . . . . 
-        . f d d d d e e e f f . . . . . 
-        . . f f f f f e e e e f . . . . 
-        . . . . f f e e e e e e f . f f 
-        . . . f e e f e e f e e f . e f 
-        . . f e e f e e f e e e f . e f 
-        . f b d f d b f b b f e f f e f 
-        . f d d f d d f d d b e f f f f 
-        . . f f f f f f f f f f f f f . 
-        `, SpriteKind.Player)
-    P2_Sprite = sprites.create(img`
         ........................
         ........................
         ........................
@@ -201,10 +223,32 @@ if (game.askForNumber("1 or 2", 1) == 1) {
         ........................
         ........................
         ........................
+        `, SpriteKind.Player)
+    P2_Sprite = sprites.create(img`
+        . . . . f f f f f . . . . . . . 
+        . . . f e e e e e f . . . . . . 
+        . . f d d d d e e e f . . . . . 
+        . c d f d d f d e e f f . . . . 
+        . c d f d d f d e e d d f . . . 
+        c d e e d d d d e e b d c . . . 
+        c d d d d c d d e e b d c . . . 
+        c c c c c d d e e e f c . . . . 
+        . f d d d d e e e f f . . . . . 
+        . . f f f f f e e e e f . . . . 
+        . . . . f f e e e e e e f . f f 
+        . . . f e e f e e f e e f . e f 
+        . . f e e f e e f e e e f . e f 
+        . f b d f d b f b b f e f f e f 
+        . f d d f d d f d d b e f f f f 
+        . . f f f f f f f f f f f f f . 
         `, SpriteKind.Player)
 }
 P1_Sprite.setStayInScreen(true)
 P2_Sprite.setStayInScreen(true)
+namespace userconfig{
+    export const ARCADE_SCREEN_WIDTH = 320
+   export const ARCADE_SCREEN_HEIGHT = 240
+}
 forever(function () {
     if (Proof_of_concept(P1_move_history, Combo_store)) {
         game.splash("It works")
